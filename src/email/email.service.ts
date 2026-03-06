@@ -30,6 +30,8 @@ export class EmailService {
           user: gmailConfig.user,
           pass: gmailConfig.password,
         },
+        connectionTimeout: 10000, // 10 seconds
+        socketTimeout: 10000, // 10 seconds
       });
       this.logger.log('✅ Gmail transporter initialized successfully');
     } else {
