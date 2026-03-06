@@ -15,6 +15,11 @@ export class EmailService {
     this.frontendUrl = this.configService.get('FRONTEND_URL') || 'http://localhost:3000';
     this.fromEmail = gmailConfig?.user || 'noreply@example.com';
 
+    // Log for debugging
+    this.logger.log(`Gmail Config - User: ${gmailConfig?.user}`);
+    this.logger.log(`Gmail Config - Password length: ${gmailConfig?.password?.length || 0}`);
+    this.logger.log(`Gmail Config - Host: ${gmailConfig?.host}, Port: ${gmailConfig?.port}, Secure: ${gmailConfig?.secure}`);
+
     // Initialize Nodemailer transporter with Gmail SMTP
     if (gmailConfig?.user && gmailConfig?.password) {
       this.transporter = nodemailer.createTransport({
@@ -26,8 +31,10 @@ export class EmailService {
           pass: gmailConfig.password,
         },
       });
+      this.logger.log('✅ Gmail transporter initialized successfully');
     } else {
       // Dev mode: no transporter configured
+      this.logger.warn('⚠️ Gmail credentials not configured - emails will be logged only');
       this.transporter = null;
     }
   }
