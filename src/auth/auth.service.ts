@@ -15,6 +15,7 @@ import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { OAuthDto } from './dto/oauth.dto';
 import { ProfilesService } from '../profiles/profiles.service';
+import { EmailService } from '../email/email.service';
 
 @Injectable()
 export class AuthService {
@@ -25,6 +26,7 @@ export class AuthService {
     private readonly tokenRepository: Repository<VerificationToken>,
     private readonly jwtService: JwtService,
     private readonly profilesService: ProfilesService,
+    private readonly emailService: EmailService,
   ) {}
 
   async register(registerDto: RegisterDto) {
@@ -57,8 +59,8 @@ export class AuthService {
       'email_verification',
     );
 
-    // TODO: Send verification email
-    // await this.emailService.sendVerificationEmail(user.email, verificationToken);
+    // Send verification email
+    await this.emailService.sendVerificationEmail(user.email, verificationToken);
 
     return {
       message: 'Registration successful. Please check your email to verify your account.',

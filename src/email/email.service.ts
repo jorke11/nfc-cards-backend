@@ -1,28 +1,34 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { SESClient, SendEmailCommand } from '@aws-sdk/client-ses';
+import * as nodemailer from 'nodemailer';
+import { Transporter } from 'nodemailer';
 
 @Injectable()
 export class EmailService {
-  private readonly sesClient: SESClient;
+  private readonly transporter: Transporter | null;
   private readonly logger = new Logger(EmailService.name);
   private readonly fromEmail: string;
   private readonly frontendUrl: string;
 
   constructor(private readonly configService: ConfigService) {
-    const awsConfig = this.configService.get('aws');
+    const gmailConfig = this.configService.get('gmail');
     this.frontendUrl = this.configService.get('FRONTEND_URL') || 'http://localhost:3000';
-    this.fromEmail = 'noreply@yourdomain.com'; // Update with your verified SES email
+    this.fromEmail = gmailConfig?.user || 'noreply@example.com';
 
-    // Only initialize SES client if AWS credentials are provided
-    if (awsConfig?.accessKeyId && awsConfig.accessKeyId !== 'local-dev-skip') {
-      this.sesClient = new SESClient({
-        region: awsConfig.region,
-        credentials: {
-          accessKeyId: awsConfig.accessKeyId,
-          secretAccessKey: awsConfig.secretAccessKey,
+    // Initialize Nodemailer transporter with Gmail SMTP
+    if (gmailConfig?.user && gmailConfig?.password) {
+      this.transporter = nodemailer.createTransport({
+        host: gmailConfig.host,
+        port: gmailConfig.port,
+        secure: gmailConfig.secure,
+        auth: {
+          user: gmailConfig.user,
+          pass: gmailConfig.password,
         },
       });
+    } else {
+      // Dev mode: no transporter configured
+      this.transporter = null;
     }
   }
 
@@ -212,40 +218,24 @@ export class EmailService {
     htmlBody: string,
     textBody: string,
   ): Promise<void> {
-    // Skip SES and log to console in development mode
-    if (!this.sesClient) {
+    // Skip email sending and log to console in development mode
+    if (!this.transporter) {
       this.logger.log(`[DEV MODE] Email would be sent to: ${to}`);
       this.logger.log(`[DEV MODE] Subject: ${subject}`);
       this.logger.log(`[DEV MODE] Text Body:\n${textBody}`);
       return;
     }
 
-    const command = new SendEmailCommand({
-      Source: this.fromEmail,
-      Destination: {
-        ToAddresses: [to],
-      },
-      Message: {
-        Subject: {
-          Data: subject,
-          Charset: 'UTF-8',
-        },
-        Body: {
-          Html: {
-            Data: htmlBody,
-            Charset: 'UTF-8',
-          },
-          Text: {
-            Data: textBody,
-            Charset: 'UTF-8',
-          },
-        },
-      },
-    });
-
     try {
-      await this.sesClient.send(command);
-      this.logger.log(`Email sent successfully to ${to}`);
+      const info = await this.transporter.sendMail({
+        from: this.fromEmail,
+        to: to,
+        subject: subject,
+        text: textBody,
+        html: htmlBody,
+      });
+
+      this.logger.log(`Email sent successfully to ${to} (Message ID: ${info.messageId})`);
     } catch (error) {
       this.logger.error(`Failed to send email to ${to}:`, error);
       // Don't throw error - email failures shouldn't block the main flow
