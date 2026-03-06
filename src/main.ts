@@ -46,7 +46,7 @@ async function bootstrap() {
   const httpAdapter = app.getHttpAdapter().getInstance() as express.Express;
   const allowedOrigin = process.env.FRONTEND_URL || 'http://localhost:3000';
   httpAdapter.use('/uploads', (req: express.Request, res: express.Response, next: express.NextFunction) => {
-    res.setHeader('Access-Control-Allow-Origin', allowedOrigin);
+    res.setHeader('Access-Control-Allow-Origin', "*");
     res.setHeader('Access-Control-Allow-Methods', 'GET, PUT, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
     if (req.method === 'OPTIONS') return res.sendStatus(204);
