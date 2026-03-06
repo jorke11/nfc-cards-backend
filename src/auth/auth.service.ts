@@ -59,8 +59,10 @@ export class AuthService {
       'email_verification',
     );
 
-    // Send verification email
-    await this.emailService.sendVerificationEmail(user.email, verificationToken);
+    // Send verification email asynchronously (don't wait for it)
+    this.emailService.sendVerificationEmail(user.email, verificationToken).catch(error => {
+      console.error('Failed to send verification email:', error);
+    });
 
     return {
       message: 'Registration successful. Please check your email to verify your account.',
