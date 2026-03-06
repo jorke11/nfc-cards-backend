@@ -68,6 +68,7 @@ async function bootstrap() {
   app.enableCors({
     origin: '*',
     credentials: false,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   });
 
   // Enable global validation pipe
