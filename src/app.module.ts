@@ -14,7 +14,7 @@ import { AnalyticsModule } from './analytics/analytics.module';
 import databaseConfig from './config/database.config';
 import jwtConfig from './config/jwt.config';
 import awsConfig from './config/aws.config';
-import gmailConfig from './config/gmail.config';
+import brevoConfig from './config/brevo.config';
 import oauthConfig from './config/oauth.config';
 
 @Module({
@@ -22,7 +22,7 @@ import oauthConfig from './config/oauth.config';
     // Configuration module
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [databaseConfig, jwtConfig, awsConfig, gmailConfig, oauthConfig],
+      load: [databaseConfig, jwtConfig, awsConfig, brevoConfig, oauthConfig],
     }),
 
     // Database module

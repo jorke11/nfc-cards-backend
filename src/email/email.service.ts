@@ -1,43 +1,34 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import * as nodemailer from 'nodemailer';
-import { Transporter } from 'nodemailer';
+import axios from 'axios';
 
 @Injectable()
 export class EmailService {
-  private readonly transporter: Transporter | null;
   private readonly logger = new Logger(EmailService.name);
   private readonly fromEmail: string;
   private readonly frontendUrl: string;
+  private readonly brevoConfigured: boolean;
+  private readonly brevoApiKey: string;
+  private readonly brevoApiUrl = 'https://api.brevo.com/v3/smtp/email';
 
   constructor(private readonly configService: ConfigService) {
-    const gmailConfig = this.configService.get('gmail');
+    const brevoConfig = this.configService.get('brevo');
     this.frontendUrl = this.configService.get('FRONTEND_URL') || 'http://localhost:3000';
-    this.fromEmail = gmailConfig?.user || 'noreply@example.com';
+    this.fromEmail = brevoConfig?.fromEmail || 'noreply@example.com';
+    this.brevoApiKey = brevoConfig?.apiKey;
 
     // Log for debugging
-    this.logger.log(`Gmail Config - User: ${gmailConfig?.user}`);
-    this.logger.log(`Gmail Config - Password length: ${gmailConfig?.password?.length || 0}`);
-    this.logger.log(`Gmail Config - Host: ${gmailConfig?.host}, Port: ${gmailConfig?.port}, Secure: ${gmailConfig?.secure}`);
+    this.logger.log(`Brevo Config - API Key configured: ${!!this.brevoApiKey}`);
+    this.logger.log(`Brevo Config - From Email: ${this.fromEmail}`);
 
-    // Initialize Nodemailer transporter with Gmail SMTP
-    if (gmailConfig?.user && gmailConfig?.password) {
-      this.transporter = nodemailer.createTransport({
-        host: gmailConfig.host,
-        port: gmailConfig.port,
-        secure: gmailConfig.secure,
-        auth: {
-          user: gmailConfig.user,
-          pass: gmailConfig.password,
-        },
-        connectionTimeout: 10000, // 10 seconds
-        socketTimeout: 10000, // 10 seconds
-      });
-      this.logger.log('✅ Gmail transporter initialized successfully');
+    // Initialize Brevo
+    if (this.brevoApiKey) {
+      this.brevoConfigured = true;
+      this.logger.log('✅ Brevo initialized successfully');
     } else {
-      // Dev mode: no transporter configured
-      this.logger.warn('⚠️ Gmail credentials not configured - emails will be logged only');
-      this.transporter = null;
+      // Dev mode: no API key configured
+      this.logger.warn('⚠️ Brevo API key not configured - emails will be logged only');
+      this.brevoConfigured = false;
     }
   }
 
@@ -228,7 +219,7 @@ export class EmailService {
     textBody: string,
   ): Promise<void> {
     // Skip email sending and log to console in development mode
-    if (!this.transporter) {
+    if (!this.brevoConfigured) {
       this.logger.log(`[DEV MODE] Email would be sent to: ${to}`);
       this.logger.log(`[DEV MODE] Subject: ${subject}`);
       this.logger.log(`[DEV MODE] Text Body:\n${textBody}`);
@@ -236,17 +227,31 @@ export class EmailService {
     }
 
     try {
-      const info = await this.transporter.sendMail({
-        from: this.fromEmail,
-        to: to,
+      const payload = {
+        sender: {
+          name: 'NFC Digital Profiles',
+          email: this.fromEmail,
+        },
+        to: [
+          {
+            email: to,
+          },
+        ],
         subject: subject,
-        text: textBody,
-        html: htmlBody,
+        htmlContent: htmlBody,
+        textContent: textBody,
+      };
+
+      const response = await axios.post(this.brevoApiUrl, payload, {
+        headers: {
+          'api-key': this.brevoApiKey,
+          'Content-Type': 'application/json',
+        },
       });
 
-      this.logger.log(`Email sent successfully to ${to} (Message ID: ${info.messageId})`);
+      this.logger.log(`Email sent successfully to ${to} (Message ID: ${response.data.messageId})`);
     } catch (error) {
-      this.logger.error(`Failed to send email to ${to}:`, error);
+      this.logger.error(`Failed to send email to ${to}:`, error.response?.data || error.message);
       // Don't throw error - email failures shouldn't block the main flow
     }
   }
