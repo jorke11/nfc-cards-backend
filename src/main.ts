@@ -64,10 +64,10 @@ async function bootstrap() {
     });
   });
 
-  // Enable CORS for frontend
+  // Enable CORS for all origins
   app.enableCors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
-    credentials: true,
+    origin: '*',
+    credentials: false,
   });
 
   // Enable global validation pipe
