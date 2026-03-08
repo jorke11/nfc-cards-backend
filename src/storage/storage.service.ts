@@ -31,8 +31,8 @@ export class StorageService {
     const key = `profile-images/${uniqueFileName}`;
 
     const baseUrl = process.env.APP_URL || 'http://localhost:4000';
-    const uploadUrl = `${baseUrl}/public/images/${uniqueFileName}`;
-    const fileUrl = `${baseUrl}/public/images/${uniqueFileName}`;
+    const uploadUrl = `${baseUrl}/uploads/${uniqueFileName}`;
+    const fileUrl = `${baseUrl}/uploads/${uniqueFileName}`;
 
     return { uploadUrl, fileUrl, key };
   }
