@@ -38,24 +38,23 @@ async function bootstrap() {
 
   const app = await NestFactory.create(AppModule);
 
-  // Local dev file storage: serve /uploads as static and handle raw PUT uploads
-  const uploadsDir = path.join(process.cwd(), 'uploads');
-  if (!fs.existsSync(uploadsDir)) {
-    fs.mkdirSync(uploadsDir, { recursive: true });
+  // Local file storage: serve /public/images as static and handle raw PUT uploads
+  const imagesDir = path.join(process.cwd(), 'public', 'images');
+  if (!fs.existsSync(imagesDir)) {
+    fs.mkdirSync(imagesDir, { recursive: true });
   }
   const httpAdapter = app.getHttpAdapter().getInstance() as express.Express;
-  const allowedOrigin = process.env.FRONTEND_URL || 'http://localhost:3000';
-  httpAdapter.use('/uploads', (req: express.Request, res: express.Response, next: express.NextFunction) => {
-    res.setHeader('Access-Control-Allow-Origin', "*");
+  httpAdapter.use('/public/images', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, PUT, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
     if (req.method === 'OPTIONS') return res.sendStatus(204);
     next();
   });
-  httpAdapter.use('/uploads', express.static(uploadsDir));
-  httpAdapter.put('/uploads/:filename', express.raw({ type: '*/*', limit: '10mb' }), (req: express.Request, res: express.Response) => {
+  httpAdapter.use('/public/images', express.static(imagesDir));
+  httpAdapter.put('/public/images/:filename', express.raw({ type: '*/*', limit: '10mb' }), (req: express.Request, res: express.Response) => {
     const filename = (req.params as { filename: string }).filename;
-    const filePath = path.join(uploadsDir, filename);
+    const filePath = path.join(imagesDir, filename);
     fs.writeFile(filePath, req.body as Buffer, (err) => {
       if (err) {
         return res.status(500).json({ error: 'Upload failed' });
