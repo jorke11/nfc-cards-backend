@@ -11,18 +11,21 @@ import { StorageModule } from './storage/storage.module';
 import { EmailModule } from './email/email.module';
 import { NfcModule } from './nfc/nfc.module';
 import { AnalyticsModule } from './analytics/analytics.module';
+import { SubscriptionsModule } from './subscriptions/subscriptions.module';
+import { OrdersModule } from './orders/orders.module';
 import databaseConfig from './config/database.config';
 import jwtConfig from './config/jwt.config';
 import awsConfig from './config/aws.config';
 import brevoConfig from './config/brevo.config';
 import oauthConfig from './config/oauth.config';
+import mercadopagoConfig from './config/mercadopago.config';
 
 @Module({
   imports: [
     // Configuration module
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [databaseConfig, jwtConfig, awsConfig, brevoConfig, oauthConfig],
+      load: [databaseConfig, jwtConfig, awsConfig, brevoConfig, oauthConfig, mercadopagoConfig],
     }),
 
     // Database module
@@ -71,6 +74,8 @@ import oauthConfig from './config/oauth.config';
     EmailModule,
     NfcModule,
     AnalyticsModule,
+    SubscriptionsModule,
+    OrdersModule,
   ],
   controllers: [AppController],
   providers: [AppService],

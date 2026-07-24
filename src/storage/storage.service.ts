@@ -13,6 +13,7 @@ export class StorageService {
     'image/jpg',
     'image/png',
     'image/webp',
+    'application/pdf',
   ];
 
   // Max file size: 5MB

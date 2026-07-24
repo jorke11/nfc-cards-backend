@@ -7,6 +7,6 @@ export class GetUploadUrlDto {
 
   @IsString()
   @IsNotEmpty()
-  @IsIn(['image/jpeg', 'image/jpg', 'image/png', 'image/webp'])
+  @IsIn(['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'application/pdf'])
   fileType: string;
 }

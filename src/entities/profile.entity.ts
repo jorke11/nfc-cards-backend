@@ -28,6 +28,19 @@ export class Profile {
   @Index()
   uniqueId: string;
 
+  @Column({ name: 'profile_type', length: 20, default: 'personal' })
+  profileType: 'personal' | 'pet' | 'business';
+
+  // Only relevant when profileType is 'business'
+  @Column({ name: 'business_mode', type: 'varchar', length: 20, nullable: true })
+  businessMode: 'menu' | 'pdf' | null;
+
+  @Column({ name: 'menu_items', type: 'jsonb', default: [] })
+  menuItems: { name: string; description?: string; price?: string; category?: string }[];
+
+  @Column({ name: 'menu_pdf_url', nullable: true, type: 'text' })
+  menuPdfUrl: string | null;
+
   // Required fields
   @Column({ name: 'first_name', length: 100 })
   firstName: string;

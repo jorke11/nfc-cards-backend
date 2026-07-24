@@ -8,9 +8,26 @@ import {
   IsObject,
   IsUrl,
   IsArray,
+  IsIn,
 } from 'class-validator';
 
 export class CreateProfileDto {
+  @IsIn(['personal', 'pet', 'business'])
+  @IsOptional()
+  profileType?: 'personal' | 'pet' | 'business';
+
+  @IsIn(['menu', 'pdf'])
+  @IsOptional()
+  businessMode?: 'menu' | 'pdf' | null;
+
+  @IsArray()
+  @IsOptional()
+  menuItems?: { name: string; description?: string; price?: string; category?: string }[];
+
+  @IsString()
+  @IsOptional()
+  menuPdfUrl?: string | null;
+
   @IsString()
   @IsNotEmpty()
   @MaxLength(100)

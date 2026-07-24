@@ -96,6 +96,8 @@ async function bootstrap() {
     .addTag('Storage', 'File upload and storage endpoints')
     .addTag('NFC', 'NFC card redirect endpoints')
     .addTag('Analytics', 'Profile analytics and tracking endpoints')
+    .addTag('Subscriptions', 'Subscription plans and MercadoPago checkout endpoints')
+    .addTag('Orders', 'NFC card orders and MercadoPago checkout endpoints')
     .addBearerAuth(
       {
         type: 'http',
