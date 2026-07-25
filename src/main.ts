@@ -62,7 +62,6 @@ async function bootstrap() {
       res.status(200).json({ message: 'OK' });
     });
   });
-
   // Enable CORS for all origins
   app.enableCors({
     origin: '*',
