@@ -44,6 +44,9 @@ async function bootstrap() {
     fs.mkdirSync(imagesDir, { recursive: true });
   }
   const httpAdapter = app.getHttpAdapter().getInstance() as express.Express;
+  httpAdapter.get('/', (_req: express.Request, res: express.Response) => {
+    res.send('nfc-card');
+  });
   httpAdapter.use('/uploads', (req: express.Request, res: express.Response, next: express.NextFunction) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, PUT, OPTIONS');
