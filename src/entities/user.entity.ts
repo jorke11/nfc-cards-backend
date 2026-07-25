@@ -30,6 +30,9 @@ export class User {
   @Column({ name: 'provider_id', nullable: true })
   providerId: string;
 
+  @Column({ default: 'user' })
+  role: 'user' | 'root';
+
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 

@@ -38,6 +38,9 @@ export class Subscription {
   @Column({ name: 'init_point', nullable: true, type: 'text' })
   initPoint: string | null;
 
+  @Column({ name: 'next_payment_date', type: 'timestamp', nullable: true })
+  nextPaymentDate: Date | null;
+
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 

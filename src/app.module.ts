@@ -13,6 +13,7 @@ import { NfcModule } from './nfc/nfc.module';
 import { AnalyticsModule } from './analytics/analytics.module';
 import { SubscriptionsModule } from './subscriptions/subscriptions.module';
 import { OrdersModule } from './orders/orders.module';
+import { AdminModule } from './admin/admin.module';
 import databaseConfig from './config/database.config';
 import jwtConfig from './config/jwt.config';
 import awsConfig from './config/aws.config';
@@ -76,6 +77,7 @@ import mercadopagoConfig from './config/mercadopago.config';
     AnalyticsModule,
     SubscriptionsModule,
     OrdersModule,
+    AdminModule,
   ],
   controllers: [AppController],
   providers: [AppService],

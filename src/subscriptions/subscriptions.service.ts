@@ -76,6 +76,7 @@ export class SubscriptionsService {
     subscription.providerSubscriptionId = result.id ?? null;
     subscription.status = 'pending';
     subscription.initPoint = result.init_point ?? null;
+    subscription.nextPaymentDate = result.next_payment_date ? new Date(result.next_payment_date) : null;
 
     return this.subscriptionRepository.save(subscription);
   }
@@ -99,6 +100,9 @@ export class SubscriptionsService {
 
     const result = await this.preApproval.get({ id: providerSubscriptionId });
     subscription.status = (result.status as Subscription['status']) || subscription.status;
+    subscription.nextPaymentDate = result.next_payment_date
+      ? new Date(result.next_payment_date)
+      : subscription.nextPaymentDate;
     await this.subscriptionRepository.save(subscription);
   }
 }
