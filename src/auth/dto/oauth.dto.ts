@@ -23,5 +23,9 @@ export class OAuthDto {
 
   @IsString()
   @IsOptional()
+  photoUrl?: string;
+
+  @IsString()
+  @IsOptional()
   accessToken?: string;
 }

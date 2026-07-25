@@ -216,7 +216,7 @@ export class AuthService {
   }
 
   async handleOAuth(oauthDto: OAuthDto) {
-    const { provider, providerId, email, firstName, lastName } = oauthDto;
+    const { provider, providerId, email, firstName, lastName, photoUrl } = oauthDto;
 
     // Check if user exists with this provider
     let user = await this.userRepository.findOne({
@@ -248,7 +248,14 @@ export class AuthService {
       await this.profilesService.createProfile(user.id, {
         firstName: firstName || provider,
         lastName: lastName || 'User',
+        photoUrl: photoUrl || null,
       });
+    } else if (photoUrl) {
+      // Keep the profile photo in sync with the provider on every login
+      const profile = await this.profilesService.findByUserId(user.id);
+      if (profile.photoUrl !== photoUrl) {
+        await this.profilesService.updateProfile(user.id, { photoUrl });
+      }
     }
 
     // Generate JWT token
