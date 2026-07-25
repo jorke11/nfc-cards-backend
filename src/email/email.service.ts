@@ -49,7 +49,7 @@ export class EmailService {
           <div class="container">
             <h1>Verify Your Email Address</h1>
             <p>Thank you for registering! Please verify your email address by clicking the button below:</p>
-            <a href="${verificationUrl}" style="display:inline-block;padding:12px 24px;background-color:#ffffff;color:#FFFFFF;text-decoration:none;border-radius:6px;margin:20px 0;border:2px solid #4F46E5;font-weight:bold;">Verify Email</a>
+            <a href="${verificationUrl}" style="display:inline-block;padding:12px 24px;background-color:#ffffff;color:#4F46E5;text-decoration:none;border-radius:6px;margin:20px 0;border:2px solid #4F46E5;font-weight:bold;">Verify Email</a>
             <p>Or copy and paste this link into your browser:</p>
             <p>${verificationUrl}</p>
             <p>This link will expire in 24 hours.</p>
@@ -137,7 +137,7 @@ export class EmailService {
           <div class="container">
             <h1>Sign In to Your Account</h1>
             <p>Click the button below to sign in to your account:</p>
-            <a href="${magicLinkUrl}" class="button">Sign In</a>
+            <a href="${magicLinkUrl}" style="display:inline-block;padding:12px 24px;background-color:#ffffff;color:#4F46E5;text-decoration:none;border-radius:6px;margin:20px 0;border:2px solid #4F46E5;font-weight:bold;">Sign In</a>
             <p>Or copy and paste this link into your browser:</p>
             <p>${magicLinkUrl}</p>
             <p>This link will expire in 15 minutes.</p>
@@ -180,7 +180,7 @@ export class EmailService {
             <p>Hi ${firstName},</p>
             <p>Welcome to NFC Digital Profiles! We're excited to have you on board.</p>
             <p>With your account, you can create a stunning digital profile that's accessible via NFC cards, QR codes, and direct links.</p>
-            <a href="${this.frontendUrl}/dashboard" class="button">Get Started</a>
+            <a href="${this.frontendUrl}/dashboard" style="display:inline-block;padding:12px 24px;background-color:#ffffff;color:#4F46E5;text-decoration:none;border-radius:6px;margin:20px 0;border:2px solid #4F46E5;font-weight:bold;">Get Started</a>
             <p>If you have any questions, feel free to reach out to our support team.</p>
             <p>Best regards,<br>The NFC Digital Profiles Team</p>
           </div>
