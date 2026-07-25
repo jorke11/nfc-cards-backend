@@ -243,6 +243,12 @@ export class AuthService {
       });
 
       await this.userRepository.save(user);
+
+      // Auto-create a profile for the new user, same as local registration
+      await this.profilesService.createProfile(user.id, {
+        firstName: firstName || provider,
+        lastName: lastName || 'User',
+      });
     }
 
     // Generate JWT token
