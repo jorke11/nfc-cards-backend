@@ -3,6 +3,7 @@ import {
   Post,
   Delete,
   Body,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -11,6 +12,7 @@ import {
   ApiResponse,
   ApiBearerAuth,
 } from '@nestjs/swagger';
+import type { Request } from 'express';
 import { StorageService } from './storage.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { GetUploadUrlDto } from './dto/upload-url.dto';
@@ -39,8 +41,9 @@ export class StorageController {
     status: 401,
     description: 'Unauthorized. Invalid or missing JWT token.',
   })
-  async getUploadUrl(@Body() dto: GetUploadUrlDto) {
-    return this.storageService.getPresignedUploadUrl(dto.fileName, dto.fileType);
+  async getUploadUrl(@Body() dto: GetUploadUrlDto, @Req() req: Request) {
+    const baseUrl = `${req.protocol}://${req.get('host')}`;
+    return this.storageService.getPresignedUploadUrl(dto.fileName, dto.fileType, baseUrl);
   }
 
   @Delete('image')

@@ -44,6 +44,10 @@ async function bootstrap() {
     fs.mkdirSync(imagesDir, { recursive: true });
   }
   const httpAdapter = app.getHttpAdapter().getInstance() as express.Express;
+  // Behind a reverse proxy in production, trust X-Forwarded-Proto/Host so
+  // req.protocol/req.get('host') reflect the real public URL, not the
+  // internal http://localhost the proxy forwards to.
+  httpAdapter.set('trust proxy', 1);
   httpAdapter.get('/', (_req: express.Request, res: express.Response) => {
     res.send('nfc-card');
   });

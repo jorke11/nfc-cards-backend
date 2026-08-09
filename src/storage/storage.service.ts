@@ -22,6 +22,7 @@ export class StorageService {
   async getPresignedUploadUrl(
     fileName: string,
     fileType: string,
+    baseUrl: string,
   ): Promise<{ uploadUrl: string; fileUrl: string; key: string }> {
     if (!this.ALLOWED_FILE_TYPES.includes(fileType)) {
       throw new BadRequestException('Invalid file type');
@@ -31,7 +32,6 @@ export class StorageService {
     const uniqueFileName = `${randomBytes(16).toString('hex')}.${fileExtension}`;
     const key = `profile-images/${uniqueFileName}`;
 
-    const baseUrl = process.env.APP_URL || 'http://localhost:4000';
     const uploadUrl = `${baseUrl}/uploads/${uniqueFileName}`;
     const fileUrl = `${baseUrl}/uploads/${uniqueFileName}`;
 
