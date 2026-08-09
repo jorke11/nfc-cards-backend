@@ -224,33 +224,32 @@ export class AuthService {
     });
 
     if (!user) {
-      // Check if user exists with this email
+      // Check if user exists with this email (registered via a different
+      // provider, e.g. local password signup) — link by email and log them
+      // in as that account rather than rejecting the sign-in.
       user = await this.userRepository.findOne({ where: { email } });
 
-      if (user) {
-        // User exists with different provider - link accounts
-        throw new ConflictException(
-          'An account with this email already exists. Please sign in with your original method.',
-        );
+      if (!user) {
+        // Create new user
+        user = this.userRepository.create({
+          email,
+          authProvider: provider as any,
+          providerId,
+          emailVerified: true, // OAuth emails are pre-verified
+        });
+
+        await this.userRepository.save(user);
+
+        // Auto-create a profile for the new user, same as local registration
+        await this.profilesService.createProfile(user.id, {
+          firstName: firstName || provider,
+          lastName: lastName || 'User',
+          photoUrl: photoUrl || null,
+        });
       }
+    }
 
-      // Create new user
-      user = this.userRepository.create({
-        email,
-        authProvider: provider as any,
-        providerId,
-        emailVerified: true, // OAuth emails are pre-verified
-      });
-
-      await this.userRepository.save(user);
-
-      // Auto-create a profile for the new user, same as local registration
-      await this.profilesService.createProfile(user.id, {
-        firstName: firstName || provider,
-        lastName: lastName || 'User',
-        photoUrl: photoUrl || null,
-      });
-    } else if (photoUrl) {
+    if (photoUrl) {
       // Keep the profile photo in sync with the provider on every login
       const profile = await this.profilesService.findByUserId(user.id);
       if (profile.photoUrl !== photoUrl) {
