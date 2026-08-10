@@ -51,6 +51,10 @@ export class Profile {
   @Column({ name: 'document_label', type: 'varchar', nullable: true, length: 100 })
   documentLabel: string | null;
 
+  // Where the NFC tag / QR code redirects to — defaults to the profile page itself
+  @Column({ name: 'redirect_target', type: 'varchar', length: 20, default: 'profile' })
+  redirectTarget: 'profile' | 'instagram' | 'youtube' | 'tiktok' | 'linkedin' | 'document' | 'menu_pdf';
+
   // Required fields
   @Column({ name: 'first_name', length: 100 })
   firstName: string;

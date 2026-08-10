@@ -31,11 +31,32 @@ export class NfcService {
       return `${this.frontendUrl}/profile-disabled`;
     }
 
-    // Build redirect URL
-    if (profile.username) {
-      return `${this.frontendUrl}/${profile.username}`;
-    } else {
-      return `${this.frontendUrl}/p/${profile.uniqueId}`;
+    const profileUrl = profile.username
+      ? `${this.frontendUrl}/${profile.username}`
+      : `${this.frontendUrl}/p/${profile.uniqueId}`;
+
+    // If a custom redirect target is set and its link is present, use it instead
+    const targetUrl = this.resolveRedirectTargetUrl(profile);
+    return targetUrl || profileUrl;
+  }
+
+  private resolveRedirectTargetUrl(profile: Profile): string | null {
+    switch (profile.redirectTarget) {
+      case 'instagram':
+        return profile.socialLinks?.instagram || null;
+      case 'youtube':
+        return profile.socialLinks?.youtube || null;
+      case 'tiktok':
+        return profile.socialLinks?.tiktok || null;
+      case 'linkedin':
+        return profile.socialLinks?.linkedin || null;
+      case 'document':
+        return profile.documentUrl || null;
+      case 'menu_pdf':
+        return profile.menuPdfUrl || null;
+      case 'profile':
+      default:
+        return null;
     }
   }
 }

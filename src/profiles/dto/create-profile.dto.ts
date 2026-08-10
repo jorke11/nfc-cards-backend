@@ -42,6 +42,10 @@ export class CreateProfileDto {
   @MaxLength(100)
   documentLabel?: string | null;
 
+  @IsIn(['profile', 'instagram', 'youtube', 'tiktok', 'linkedin', 'document', 'menu_pdf'])
+  @IsOptional()
+  redirectTarget?: 'profile' | 'instagram' | 'youtube' | 'tiktok' | 'linkedin' | 'document' | 'menu_pdf';
+
   @IsString()
   @IsNotEmpty()
   @MaxLength(100)

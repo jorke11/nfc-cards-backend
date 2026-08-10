@@ -63,6 +63,7 @@ export class ProfilesService {
       uniqueId,
     });
 
+    this.validateRedirectTarget(profile);
     return await this.profileRepository.save(profile);
   }
 
@@ -82,7 +83,28 @@ export class ProfilesService {
 
     // Update profile
     Object.assign(profile, updateProfileDto);
+    this.validateRedirectTarget(profile);
     return await this.profileRepository.save(profile);
+  }
+
+  private validateRedirectTarget(profile: Profile): void {
+    const target = profile.redirectTarget;
+    if (!target || target === 'profile') return;
+
+    const linkByTarget: Record<string, string | null | undefined> = {
+      instagram: profile.socialLinks?.instagram,
+      youtube: profile.socialLinks?.youtube,
+      tiktok: profile.socialLinks?.tiktok,
+      linkedin: profile.socialLinks?.linkedin,
+      document: profile.documentUrl,
+      menu_pdf: profile.menuPdfUrl,
+    };
+
+    if (!linkByTarget[target]?.trim()) {
+      // The underlying link isn't set (or was just removed) — fall back to the profile page
+      // rather than saving a redirect target that points nowhere.
+      profile.redirectTarget = 'profile';
+    }
   }
 
   async findByUserId(userId: string): Promise<Profile> {
