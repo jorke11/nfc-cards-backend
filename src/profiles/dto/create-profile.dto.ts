@@ -29,6 +29,15 @@ export class CreateProfileDto {
   menuPdfUrl?: string | null;
 
   @IsString()
+  @IsOptional()
+  documentUrl?: string | null;
+
+  @IsString()
+  @IsOptional()
+  @MaxLength(100)
+  documentLabel?: string | null;
+
+  @IsString()
   @IsNotEmpty()
   @MaxLength(100)
   firstName: string;
