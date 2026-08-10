@@ -41,6 +41,9 @@ export class Profile {
   @Column({ name: 'menu_pdf_url', nullable: true, type: 'text' })
   menuPdfUrl: string | null;
 
+  @Column({ name: 'menu_pdf_label', type: 'varchar', nullable: true, length: 100 })
+  menuPdfLabel: string | null;
+
   // Downloadable document (e.g. CV / portfolio) — available for any profile type
   @Column({ name: 'document_url', nullable: true, type: 'text' })
   documentUrl: string | null;

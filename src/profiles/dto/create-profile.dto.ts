@@ -30,6 +30,11 @@ export class CreateProfileDto {
 
   @IsString()
   @IsOptional()
+  @MaxLength(100)
+  menuPdfLabel?: string | null;
+
+  @IsString()
+  @IsOptional()
   documentUrl?: string | null;
 
   @IsString()
